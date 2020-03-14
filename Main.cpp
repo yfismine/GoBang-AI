@@ -11,10 +11,12 @@ int main()
 	cout << "\t\t\t  *      1：任意一方达成五子连线即可胜利                   *" << endl;
 	cout << "\t\t\t  *      2：玩家先行，但是玩家有简单的禁手规则             *" << endl;
 	cout << "\t\t\t  *      3：禁手规则：如果玩家达成五子连线的同时           *" << endl;
-	cout << "\t\t\t  *         电脑通过一步也可以达成五子连线则判断电脑获胜   *" << endl;
+	cout << "\t\t\t  *         电脑通过一步也可以达成五子连线则判定电脑获胜   *" << endl;
 	cout << "\t\t\t  *      4:全屏游戏效果更佳                                *" << endl;
 	cout << "\t\t\t  *                                                        *" << endl;
 	cout << "\t\t\t  *                TimeConsume:3 d     by:yf    2019.7.24  *" << endl;
+	cout << "\t\t\t  *                                                        *" << endl;
+	cout << "\t\t\t  *                Last Update:2020.3.13                   *" << endl;
 	cout << "\t\t\t  **********************************************************" << endl;
 	cout << endl << endl;
 	cout << "\t\t\t\t\t\t任意键开始游戏";
