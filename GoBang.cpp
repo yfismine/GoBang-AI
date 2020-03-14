@@ -13,6 +13,19 @@ GoBang::GoBang()
 	for (int i = 0; i < 15; i++)
 		for (int j = 0; j < 15; j++)
 			chessBoard[i][j] = ' ';
+	/*chessBoard[2][2] = COMPTER;
+	chessBoard[2][4] = HUMAN;
+	chessBoard[3][2] = HUMAN;
+	chessBoard[3][3] = COMPTER;
+	chessBoard[3][5] = HUMAN;
+	chessBoard[4][2] = COMPTER;
+	chessBoard[4][3] = COMPTER;
+	chessBoard[4][4] = HUMAN;
+	chessBoard[4][5] = HUMAN;
+	chessBoard[5][2] = COMPTER;
+	chessBoard[6][6] = HUMAN;
+	chessBoard[5][3] = COMPTER;
+	chessBoard[5][5] = HUMAN;*/
 	printChess();
 	
 }
@@ -236,9 +249,11 @@ int GoBang::sorce(point p, int name)
 		temp= situaltionAnalysis(length, name, left, right);
 		result += temp;
 	}
-	if (result.alive4 >= 1 || result.die4 >= 2 || (result.die4 >= 1 && result.alive3 >= 1) || result.alive3 >= 2)
+	if (result.win5>=1)
+		totalSorce += 20000000;
+	if (result.alive4 >= 1 || result.dalive4 >= 2 || (result.dalive4 >= 1 && result.alive3 >= 1) || result.alive3 >= 2)
 		totalSorce+= 10000000;      //绝杀局
-	totalSorce += result.alive3 * 100000 + result.alive2 * 1000 + result.die4 * 100000 + result.die3 * 1000 + result.ddie4 * 80000 + result.dalive2 * 800 + result.dalive3 * 80000+result.alive1*10+result.dalive1*5+result.win5*20000000;
+	totalSorce += result.dalive4 * 10000 + result.die4 * 5000 + result.alive3 * 10000 + result.dalive4 * 1000 + result.die3 * 500 + result.alive2 * 1000 + result.dalive2 * 100 + result.die2 * 50 + result.alive1 * 100 + result.dalive1 * 10 + result.die1 * 5;
 	return totalSorce;
 }
 
@@ -321,35 +336,33 @@ void GoBang::getBoundary(char * left,point le, char * right,point ri,direction d
 GoBang::sum GoBang::situaltionAnalysis(int length, char name, char * left, char * right)
 {
 	sum temp;
-	if (length == 5)
+	if (length >= 5)
 		temp.win5++;
 	else if (length == 4)
 	{
 		if (left[1] == ' ' && right[1] == ' ')
 			temp.alive4++;
 		else if (left[1] == ' ' || right[1] == ' ')
-			temp.die4++;
+			temp.dalive4++;
 		else
-			temp.nothing++;
+			temp.die4;
 	}
 	else if (length == 3)
 	{
 		if ((left[1] == ' ' && left[2] == name) || (right[1] == ' ' && right[2] == name))
-			temp.ddie4++;
+			temp.dalive4++;
 		else if (left[1] == ' ' && right[1] == ' ' && (left[2] == ' ' || right[2] == ' '))
 			temp.alive3++;
 		else if ((left[1] == ' ' && left[2] == ' ') || (right[1] == ' ' && right[2] == ' '))
-			temp.die3++;
-		else if (left[1] == ' ' && right[1] == ' ')
-			temp.die3++;
+			temp.dalive3++;
 		else
-			temp.nothing++;
+			temp.die3++;
 	}
 	else if (length == 2)
 	{
 		if ((left[1] == ' ' && left[2] == name && left[3] == name) &&
 			(right[1] == ' ' && right[2] == name && right[3] == name))
-			temp.ddie4++;
+			temp.dalive4++;
 		else if (left[1] == ' ' && right[1] == ' ' &&
 			((left[2] == name && left[3] == ' ') || (right[2] == name && right[3] == ' ')))
 			temp.dalive3++;
@@ -369,13 +382,11 @@ GoBang::sum GoBang::situaltionAnalysis(int length, char name, char * left, char 
 		else if ((left[1] == ' ' && left[2] == ' ' && left[3] == ' ') ||
 			(right[1] == ' ' && right[2] == ' ' && right[3] == ' '))
 			temp.die2++;
-		else
-			temp.nothing++;
 	}
 	else if (length == 1) {
 		if ((left[1] == ' ' && left[2] == name && left[3] == name && left[4] == name) ||
 			(right[1] == ' ' && right[2] == name && right[3] == name && right[4] == name))
-			temp.ddie4++;
+			temp.dalive4++;
 		else if ((left[1] == ' ' && right[1] == ' ') && ((left[2] == name && left[3] == name && left[4] == ' ') ||
 			(right[2] == name && right[3] == name && right[4] == ' ')))
 			temp.dalive3++;
@@ -419,7 +430,7 @@ GoBang::sum GoBang::situaltionAnalysis(int length, char name, char * left, char 
 		else if (left[1] == ' ' || right[1] == ' ')
 			temp.dalive1++;
 		else
-			temp.nothing++;
+			temp.die1++;
 	}
 	return temp;
 }
@@ -457,7 +468,7 @@ bool GoBang::immedicteWin(char name, point & bestMove,int flag)
 						return true;
 					}
 				}
-				if (result.alive4 >= 1 || result.die4 >= 2 || (result.die4 >= 1 && result.alive3 >= 1) || result.alive3 >= 2)
+				if (result.alive4 >= 1 || result.dalive4 >= 2 || (result.dalive4 >= 1 && result.alive3 >= 1) || result.alive3 >= 2)
 					waitTemp.push_back({ i,j });
 				unPlace(i, j);
 			}
@@ -673,7 +684,7 @@ vector<GoBang::point> GoBang::killFindComp(vector<point> &emptyDefense)
 					getLinkPiece(length, ri, COMPTER, { i,j }, d, 1);
 					getBoundary(left, le, right, ri, d, COMPTER);
 					result = situaltionAnalysis(length, COMPTER, left, right);
-					if (result.alive3 >= 1 || result.die4 >= 1 || result.ddie4 >= 1)
+					if (result.alive3 >= 1 || result.dalive4 >= 1||result.alive4>=1||result.win5>=1)
 					{
 						for (int k = 1; k <= 4; k++)
 						{
@@ -701,7 +712,7 @@ vector<GoBang::point> GoBang::killFindComp(vector<point> &emptyDefense)
 	return waitTemp;
 }
 
-/*对于人而言只查看电脑的活三，死四的防御点和自己的死四点（冲四）*/
+/*对于人而言只查看电脑的活三，死四的防御点和自己的活三、死四点（冲四）*/
 vector<GoBang::point> GoBang::killFindHuman(vector<point> &defense)
 {
 	for (int i = 0; i < 15; i++)
@@ -721,7 +732,7 @@ vector<GoBang::point> GoBang::killFindHuman(vector<point> &defense)
 					getLinkPiece(length, ri, HUMAN, { i,j }, d, 1);
 					getBoundary(left, le, right, ri, d, HUMAN);
 					result = situaltionAnalysis(length, HUMAN, left, right);
-					if (result.alive3 >= 1 || result.die4 >= 1 || result.ddie4 >= 1)
+					if (result.alive3 >= 1 || result.alive4>=1||result.dalive4>=1||result.win5>=1)
 					{
 					    defense.push_back({ i,j });
 						unPlace(i, j);   
@@ -752,7 +763,7 @@ GoBang::sorceValue GoBang::interfaceFunction(point &bestMove,int deep,int aplha,
 					getLinkPiece(length, ri, COMPTER, { i,j }, d, 1);
 					getBoundary(left, le, right, ri, d, COMPTER);
 					result = situaltionAnalysis(length, COMPTER, left, right);
-					if (result.alive3 >= 1 || result.die4 >= 1 || result.ddie4 >= 1)
+					if (result.alive3 >= 1 || result.alive4||result.dalive4)
 					{
 						for (int k = 1; k <= 4; k++)
 						{
