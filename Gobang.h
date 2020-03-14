@@ -42,15 +42,15 @@ private:
 	};
 	struct sum                     //棋子类型统计
 	{
-		int win5 = 0, alive4 = 0, die4 = 0, ddie4 = 0, alive3 = 0,
-			dalive3 = 0, die3 = 0, alive2 = 0, dalive2 = 0, die2 = 0, nothing = 0,
-			alive1 = 0, dalive1 = 0;
+		int win5 = 0, alive4 = 0, dalive4 = 0, die4 = 0, alive3 = 0,
+			dalive3 = 0, die3 = 0, alive2 = 0, dalive2 = 0, die2 = 0,
+			alive1 = 0, dalive1 = 0, die1 = 0;
 		sum operator +=(sum &rhs)
 		{
 			win5 += rhs.win5;
 			alive4 += rhs.alive4;
+			dalive4 += rhs.dalive4;
 			die4 += rhs.die4;
-			ddie4 += rhs.ddie4;
 			alive3 += rhs.alive3;
 			dalive3 += rhs.dalive3;
 			die3 += rhs.die3;
@@ -59,7 +59,7 @@ private:
 			die2 += rhs.die2;
 			alive1 += rhs.alive1;
 			dalive1 += rhs.dalive1;
-			nothing += rhs.nothing;
+			die1 += rhs.die1;
 			return *this;
 		}
 	};
