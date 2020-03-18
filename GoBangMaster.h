@@ -128,5 +128,6 @@ private:
 	point iterationDeep(point preCom,point preHum);   //迭代加深 优化速度
 	/*函数用以排序的计算*/
 	bool compareFuc(const tuple<point,long,bool>& p1,const tuple<point,long,bool>& p2);
+	
 };
 #endif
