@@ -82,10 +82,11 @@ void GoBang::addPiece(int x, int y)
 	point bestMove = iterationDeep(preCom,preHum);
 	clock_t end = clock();
 	place(bestMove.x, bestMove.y, COMPTER);
+	currentValue = wholeValue(currentValue, bestMove);
 	system("cls");
 	printChess();
 	cout << "电脑落子坐标：" << bestMove.x + 1 << " " << bestMove.y + 1 << "   本次电脑思考耗时：" << double(end - start) / CLOCKS_PER_SEC << "秒" << endl;
-	cout << "电脑思考最大深度为：" << maxDeep << ends << ends<<ends << "当前局面的分：" << currentValue << endl;
+	cout << "电脑思考最大深度为：" << maxDeep << ends << ends<<ends << "当前局面得分：" << currentValue << endl;
 	preCom = bestMove;
 	points.push({ { x - 1,y - 1 },currentValue });
 	points.push({ bestMove,currentValue });
@@ -852,7 +853,6 @@ point GoBang::iterationDeep(point preCom,point preHum)
 		if (value >= COMPTER_WIN)
 			break;
 	}
-	currentValue = wholeValue(currentValue,bestMove);
 	return bestMove;
 }
 
