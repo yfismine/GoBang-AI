@@ -105,8 +105,8 @@ private:
 	inline void unPlace(int x, int y);                              //取消棋子函数
 	inline bool judge(point p,char name);
 	inline void printChess();   //打印棋盘
-	long sorce(point p, int name,dirmark& mark);  //单点评估函数
-	long sorce(point p, int name,bool& hasddie4);
+	long score(point p, int name,dirmark& mark);  //单点评估函数
+	long score(point p, int name,bool& hasddie4);
 	inline long wholeValue(); //全盘评估函数
 	//inline long wholeValue(point remove,char name, point add, long curValue);
 	inline long wholeValue(long preValue, point addPoint);
