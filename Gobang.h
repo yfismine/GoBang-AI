@@ -63,17 +63,17 @@ private:
 			return *this;
 		}
 	};
-	struct sorceValue              //棋盘局势值统计
+	struct scoreValue              //棋盘局势值统计
 	{
 		int compterValue=0;
 		int humanValue=0;
 	};
 	struct waitPoint              //待选坐标点
 	{
-		sorceValue value;
+		scoreValue value;
 		point p;
 		waitPoint() = default;
-		waitPoint(sorceValue v, point p1)
+		waitPoint(scoreValue v, point p1)
 			:value(v), p(p1) {};
 	};
 	struct cmp                   //比较函数用以优先队列的比较
@@ -89,8 +89,8 @@ private:
 	inline bool fullBoard();    //判断是否满盘
 	bool judge(char name);      //判断是否一方胜利
 	inline bool isEmpty(const int x, const int y);  //判断一点是否为空位置
-	int sorce(point p, int name);  //单点评估函数
-	inline sorceValue wholeValue(sorceValue &value); //全盘评估函数
+	int score(point p, int name);  //单点评估函数
+	inline scoreValue wholeValue(scoreValue &value); //全盘评估函数
 	inline void printChess();   //打印棋盘
 	void forbiddenHands();      //判断是否玩家触发禁手规则
 	bool immKill();             //判断玩家的该棋是否为必防棋
@@ -101,14 +101,14 @@ private:
 	void getBoundary(char * left,point le, char * right,point ri,direction d,char name);      //获取连线方向两边4点以内的所有坐标信息
 	sum situaltionAnalysis(int length, char name, char * left, char * right);                 //分析一点的棋型
 	bool immedicteWin(char name, point &bestMove, int flag=0);                                //通用的统计是否是杀棋
-	sorceValue findCompMove(point &bestMove,int deep,int alpha, int beta);                    //关键的AI对策分析函数1
-	inline void intelligentRandom(point &bestMove, sorceValue &value,priority_queue<waitPoint,vector<waitPoint>,cmp> &queue);  //AI智能随机化函数
-	sorceValue compKillBoard(point &bestMove, int deep, int alpha, int beta);                  //算杀  关键的AI棋力提升函数1
-	sorceValue findHumanMove(point &bestMove,int deep, int alpha, int beta);                   //关键的AI对策分析函数2
-	sorceValue humanKillBoard(point &bestMove, int deep, int alpha, int beta, vector<point> &defense); //算杀  关键的AI棋力提升函数2
+	scoreValue findCompMove(point &bestMove,int deep,int alpha, int beta);                    //关键的AI对策分析函数1
+	inline void intelligentRandom(point &bestMove, scoreValue &value,priority_queue<waitPoint,vector<waitPoint>,cmp> &queue);  //AI智能随机化函数
+	scoreValue compKillBoard(point &bestMove, int deep, int alpha, int beta);                  //算杀  关键的AI棋力提升函数1
+	scoreValue findHumanMove(point &bestMove,int deep, int alpha, int beta);                   //关键的AI对策分析函数2
+	scoreValue humanKillBoard(point &bestMove, int deep, int alpha, int beta, vector<point> &defense); //算杀  关键的AI棋力提升函数2
 	vector<point> killFindComp(vector<point> &defense);             //AI的算杀启发式搜索函数1
 	vector<point> killFindHuman(vector<point> &emptyDefense);       //AI的算杀启发式搜索函数2
-	sorceValue interfaceFunction(point &bestMove,int deep,int alpha,int beta);     //算杀与全局推断的接口
+	scoreValue interfaceFunction(point &bestMove,int deep,int alpha,int beta);     //算杀与全局推断的接口
 	inline void place(int x, int y, char name);                     //实际的放置棋子函数
 	inline void unPlace(int x, int y);                              //取消棋子函数
 	vector<point> inspireFind(char name);                           //启发式搜索函数   AI性能提升的关键函数
