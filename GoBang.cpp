@@ -232,9 +232,9 @@ void GoBang::immWin()
 }
 
 /*AI棋力的决定函数之一，评估函数的好坏决定AI棋力的因素之一*/
-int GoBang::sorce(point p, int name)
+int GoBang::score(point p, int name)
 {
-	int totalSorce = 0;
+	int totalScore = 0;
 	sum result;
 	sum temp;
 	for (int i = 1; i <= 4; i++)
@@ -250,14 +250,14 @@ int GoBang::sorce(point p, int name)
 		result += temp;
 	}
 	if (result.win5>=1)
-		totalSorce += 20000000;
+		totalScore += 20000000;
 	if (result.alive4 >= 1 || result.dalive4 >= 2 || (result.dalive4 >= 1 && result.alive3 >= 1) || result.alive3 >= 2)
-		totalSorce+= 10000000;      //绝杀局
-	totalSorce += result.dalive4 * 10000 + result.die4 * 5000 + result.alive3 * 10000 + result.dalive4 * 1000 + result.die3 * 500 + result.alive2 * 1000 + result.dalive2 * 100 + result.die2 * 50 + result.alive1 * 100 + result.dalive1 * 10 + result.die1 * 5;
-	return totalSorce;
+		totalScore+= 10000000;      //绝杀局
+	totalScore += result.dalive4 * 10000 + result.die4 * 5000 + result.alive3 * 10000 + result.dalive4 * 1000 + result.die3 * 500 + result.alive2 * 1000 + result.dalive2 * 100 + result.die2 * 50 + result.alive1 * 100 + result.dalive1 * 10 + result.die1 * 5;
+	return totalScore;
 }
 
-inline GoBang::sorceValue GoBang::wholeValue(sorceValue &value)    //全局调用sorce
+inline GoBang::scoreValue GoBang::wholeValue(scoreValue &value)    //全局调用score
 {
 	for (int i = 0; i < 15; i++)
 		for (int j = 0; j < 15; j++)
@@ -265,9 +265,9 @@ inline GoBang::sorceValue GoBang::wholeValue(sorceValue &value)    //全局调�
 			if (!isEmpty(i, j))
 			{
 				if (chessBoard[i][j] == COMPTER)
-					value.compterValue += sorce({ i,j }, COMPTER);
+					value.compterValue += score({ i,j }, COMPTER);
 				else
-					value.humanValue += sorce({ i,j }, HUMAN);
+					value.humanValue += score({ i,j }, HUMAN);
 			}
 		}
 	value.compterValue -= value.humanValue;
@@ -484,11 +484,11 @@ bool GoBang::immedicteWin(char name, point & bestMove,int flag)
 	}
 }
 /*整个程序的关键部分 AI智能的来源 主要利用极大极小值算法加上动态规划，α-β裁剪 (其余四个对称函数就不再进行重复解释）*/
-GoBang::sorceValue GoBang::findCompMove(point & bestMove,int deep, int alpha, int beta)
+GoBang::scoreValue GoBang::findCompMove(point & bestMove,int deep, int alpha, int beta)
 {
 	point dc;
-	sorceValue responseValue;
-	sorceValue value;
+	scoreValue responseValue;
+	scoreValue value;
 	priority_queue<waitPoint, vector<waitPoint>, cmp> queue;
 	if (fullBoard())
 		return wholeValue(value);
@@ -525,7 +525,7 @@ GoBang::sorceValue GoBang::findCompMove(point & bestMove,int deep, int alpha, in
 }
 
 /*避免AI的棋法单一*/
-inline void GoBang::intelligentRandom(point & bestMove, sorceValue & value, priority_queue<waitPoint, vector<waitPoint>, cmp> &queue)
+inline void GoBang::intelligentRandom(point & bestMove, scoreValue & value, priority_queue<waitPoint, vector<waitPoint>, cmp> &queue)
 {
 	waitPoint first = queue.top(); queue.pop();
 	waitPoint second = queue.top();
@@ -551,11 +551,11 @@ inline void GoBang::intelligentRandom(point & bestMove, sorceValue & value, prio
 	}
 }
 
-GoBang::sorceValue GoBang::compKillBoard(point & bestMove, int deep, int alpha, int beta)
+GoBang::scoreValue GoBang::compKillBoard(point & bestMove, int deep, int alpha, int beta)
 {
 	point dc;
-	sorceValue responseValue;
-	sorceValue value;
+	scoreValue responseValue;
+	scoreValue value;
 	if (deep == 14 || fullBoard())
 		return wholeValue(value);
 	else
@@ -588,11 +588,11 @@ GoBang::sorceValue GoBang::compKillBoard(point & bestMove, int deep, int alpha, 
 	return value;
 }
 
-GoBang::sorceValue GoBang::findHumanMove(point & bestMove,int deep, int alpha, int beta)
+GoBang::scoreValue GoBang::findHumanMove(point & bestMove,int deep, int alpha, int beta)
 {
 	point dc;
-	sorceValue responseValue;
-	sorceValue value;
+	scoreValue responseValue;
+	scoreValue value;
 	if (fullBoard())
 		return wholeValue(value);
 	if (deep == 4 && prieceNumber >= 5)  //棋子数大于五时才进行算杀 这是关键 否则开始时的两步计算机将要计算大量的时间
@@ -626,11 +626,11 @@ GoBang::sorceValue GoBang::findHumanMove(point & bestMove,int deep, int alpha, i
 	return value;
 }
 
-GoBang::sorceValue GoBang::humanKillBoard(point & bestMove, int deep, int alpha, int beta,vector<point> &defense)
+GoBang::scoreValue GoBang::humanKillBoard(point & bestMove, int deep, int alpha, int beta,vector<point> &defense)
 {
 	point dc;
-	sorceValue responseValue;
-	sorceValue value;
+	scoreValue responseValue;
+	scoreValue value;
 	if (deep == 14 || fullBoard())
 		return wholeValue(value);
 	else
@@ -744,7 +744,7 @@ vector<GoBang::point> GoBang::killFindHuman(vector<point> &defense)
 	return defense;
 }
 
-GoBang::sorceValue GoBang::interfaceFunction(point &bestMove,int deep,int aplha,int beta)
+GoBang::scoreValue GoBang::interfaceFunction(point &bestMove,int deep,int aplha,int beta)
 {
 	vector<point> emptyDefense;
 	for (int i = 0; i < 15; i++)
@@ -828,7 +828,7 @@ bool GoBang::hasNeighbor(point p,char name)
 
 bool GoBang::compareHuman(point p1, point p2)
 {
-	return less<int>()(sorce(p1, HUMAN), sorce(p2, HUMAN));
+	return less<int>()(score(p1, HUMAN), score(p2, HUMAN));
 }
 
 void GoBang::sortCompter(vector<point>& p)
@@ -857,7 +857,7 @@ void GoBang::sortHuman(vector<point>& p)
 
 bool GoBang::compareCompter(point p1, point p2)
 {
-	return greater<int>()(sorce(p1, COMPTER), sorce(p2, COMPTER));
+	return greater<int>()(score(p1, COMPTER), score(p2, COMPTER));
 }
 
 #endif
