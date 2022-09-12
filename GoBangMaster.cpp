@@ -169,9 +169,9 @@ void GoBang::printChess()
 }
 
 /*AI棋力的决定函数之一，评估函数的好坏决定AI棋力的因素之一*/
-long GoBang::sorce(point p, int name,dirmark& mark)
+long GoBang::score(point p, int name,dirmark& mark)
 {
-	long totalSorce = 0;
+	long totalScore = 0;
 	sum result;
 	sum temp;
 	if (mark.find(p) == mark.end())
@@ -222,17 +222,17 @@ long GoBang::sorce(point p, int name,dirmark& mark)
 		mark[p][i] = true;
 	}
 	if (result.win5 >= 1 || result.alive4 >= 1 || result.dalive4 >= 2 || (result.dalive4 >= 1 && result.alive3 >= 1) || result.alive3 >= 2)
-		totalSorce += 20000000;      //绝杀局
+		totalScore += 20000000;      //绝杀局
 	/*else if (result.dalive4 >= 1 && result.alive2 == 0 && result.dalive2 == 0 && result.die2 == 0 && result.dalive3 == 0 && result.die3 == 0)
-		totalSorce += 1000;*/
+		totalScore += 1000;*/
 	else
-		totalSorce += result.dalive4 * 10000 + result.die4 * 5000 + result.alive3 * 10000 + result.dalive4 * 1000 + result.die3 * 500 + result.alive2 * 1000 + result.dalive2 * 100 + result.die2 * 50 + result.alive1 * 100 + result.dalive1 * 10 + result.die1 * 5;
-	return totalSorce;
+		totalScore += result.dalive4 * 10000 + result.die4 * 5000 + result.alive3 * 10000 + result.dalive4 * 1000 + result.die3 * 500 + result.alive2 * 1000 + result.dalive2 * 100 + result.die2 * 50 + result.alive1 * 100 + result.dalive1 * 10 + result.die1 * 5;
+	return totalScore;
 }
 
-long GoBang::sorce(point p, int name,bool &hasddie4)
+long GoBang::score(point p, int name,bool &hasddie4)
 {
-	long totalSorce = 0;
+	long totalScore = 0;
 	sum result;
 	sum temp;
 	for (int i = 1; i <= 4; i++)
@@ -250,15 +250,15 @@ long GoBang::sorce(point p, int name,bool &hasddie4)
 	if (result.dalive4 >= 1)
 		hasddie4 = true;
 	if (result.win5 >= 1 || result.alive4 >= 1 || result.dalive4 >= 2 || (result.dalive4 >= 1 && result.alive3 >= 1) || result.alive3 >= 2)
-		totalSorce += 20000000;      //绝杀局
+		totalScore += 20000000;      //绝杀局
 	/*else if (result.dalive4 >= 1 && result.alive2 == 0 && result.dalive2 == 0 && result.die2 == 0 && result.dalive3 == 0 && result.die3 == 0)
-		totalSorce += 1000;*/
+		totalScore += 1000;*/
 	else
-		totalSorce += result.dalive4 * 10000 + result.die4 * 5000 + result.alive3 * 10000 + result.dalive4 * 1000 + result.die3 * 500 + result.alive2 * 1000 + result.dalive2 * 100 + result.die2 * 50 + result.alive1 * 100 + result.dalive1 * 10 + result.die1 * 5;
-	return totalSorce;
+		totalScore += result.dalive4 * 10000 + result.die4 * 5000 + result.alive3 * 10000 + result.dalive4 * 1000 + result.die3 * 500 + result.alive2 * 1000 + result.dalive2 * 100 + result.die2 * 50 + result.alive1 * 100 + result.dalive1 * 10 + result.die1 * 5;
+	return totalScore;
 }
 
-inline long GoBang::wholeValue()    //全局调用sorce
+inline long GoBang::wholeValue()    //全局调用score
 {
 	dirmark mark(59,hasher);
 	long computerValue=0, humanValue=0;
@@ -267,9 +267,9 @@ inline long GoBang::wholeValue()    //全局调用sorce
 		for (int j = 0; j < 15; j++)
 		{
 			if (chessBoard[i][j] == COMPTER)
-				computerValue += sorce({ i,j }, COMPTER, mark);
+				computerValue += score({ i,j }, COMPTER, mark);
 			else if (chessBoard[i][j] == HUMAN)
-				humanValue += sorce({ i,j }, HUMAN, mark);
+				humanValue += score({ i,j }, HUMAN, mark);
 		}
 	}
 	return computerValue - humanValue;
@@ -313,28 +313,28 @@ inline long GoBang::wholeValue()    //全局调用sorce
 	auto tempList = changeList;
 	chessBoard[remove.x][remove.y] = name;
 	if (name == HUMAN)
-		value += sorce(remove, HUMAN,changeList);
+		value += score(remove, HUMAN,changeList);
 	else
 	{
-		value -= sorce(remove, COMPTER,changeList);
+		value -= score(remove, COMPTER,changeList);
 	}
 	for (auto node : changeList)
 	{
 		if (chessBoard[node.first.x][node.first.y] == HUMAN)
-			value += sorce(node.first, HUMAN,changeList);
+			value += score(node.first, HUMAN,changeList);
 		else
 		{
-			value -= sorce(node.first, COMPTER,changeList);
+			value -= score(node.first, COMPTER,changeList);
 		}
 	}
 	chessBoard[remove.x][remove.y] = ' ';
 	for (auto node : tempList)
 	{
 		if (chessBoard[node.first.x][node.first.y] == HUMAN)
-			value -= sorce(node.first, HUMAN, tempList);
+			value -= score(node.first, HUMAN, tempList);
 		else
 		{
-			value += sorce(node.first, COMPTER, tempList);
+			value += score(node.first, COMPTER, tempList);
 		}
 	}
 	dirmark mark(59,hasher);
@@ -379,20 +379,20 @@ inline long GoBang::wholeValue()    //全局调用sorce
 	for (auto node : repeat)  //删除重复计算点的值 切记不能和上面的合并
 	{
 		if (chessBoard[node.first.x][node.first.y] == HUMAN)
-			value += sorce(node.first, HUMAN, repeat);
+			value += score(node.first, HUMAN, repeat);
 		else
 		{
-			value -= sorce(node.first, COMPTER, repeat);
+			value -= score(node.first, COMPTER, repeat);
 		}
 	}
 	chessBoard[add.x][add.y] = addName;
 	for (auto node : mark)
 	{
 		if (chessBoard[node.first.x][node.first.y] == HUMAN)
-			value -= sorce(node.first, HUMAN, mark);
+			value -= score(node.first, HUMAN, mark);
 		else
 		{
-			value += sorce(node.first, COMPTER, mark);
+			value += score(node.first, COMPTER, mark);
 		}
 	}
 	return value;
@@ -436,10 +436,10 @@ inline long GoBang::wholeValue(long preValue, point addPoint)
 	for (auto node : changeList)
 	{
 		if (chessBoard[node.first.x][node.first.y] == HUMAN)
-			preValue += sorce(node.first, HUMAN, changeList);
+			preValue += score(node.first, HUMAN, changeList);
 		else
 		{
-			preValue -= sorce(node.first, COMPTER, changeList);
+			preValue -= score(node.first, COMPTER, changeList);
 		}
 	}
 	copyList.insert(make_pair(addPoint, vector<bool>(5, false)));
@@ -447,10 +447,10 @@ inline long GoBang::wholeValue(long preValue, point addPoint)
 	for (auto node : copyList)
 	{
 		if (chessBoard[node.first.x][node.first.y] == HUMAN)
-			preValue -= sorce(node.first, HUMAN, copyList);
+			preValue -= score(node.first, HUMAN, copyList);
 		else
 		{
-			preValue += sorce(node.first, COMPTER, copyList);
+			preValue += score(node.first, COMPTER, copyList);
 		}
 	}
 	return preValue;
@@ -672,7 +672,7 @@ tuple<long,bool,bool> GoBang::findCompMove(point  &bestMove, int deep,int endDee
 		for (auto node : m_temp)
 		{
 			bool hasddie4 = false;
-			long pointValue = sorce(node, COMPTER, hasddie4);
+			long pointValue = score(node, COMPTER, hasddie4);
 			temp.push_back(make_tuple(node, pointValue, hasddie4));
 		}
 		auto com = bind(&GoBang::compareFuc, this, _1, _2);
@@ -763,7 +763,7 @@ tuple<long,bool,bool> GoBang::findHumanMove(point & bestMove, int deep,int endDe
 		for (auto node : m_temp)
 		{
 			bool hasddie4 = false;
-			long pointValue = sorce(node, HUMAN, hasddie4);
+			long pointValue = score(node, HUMAN, hasddie4);
 			temp.push_back(make_tuple(node, pointValue,hasddie4));
 		}
 		auto com = bind(&GoBang::compareFuc, this, _1, _2);
